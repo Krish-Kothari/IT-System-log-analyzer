@@ -13,3 +13,7 @@ A lightweight, interactive Node.js Command Line Interface (CLI) application desi
 Run the main script to start the interactive prompt:
 ```bash
 node index.js
+```markdown
+## System Architecture
+### 1. Non-Blocking File Ingestion
+The application utilizes Node.js `fs.createReadStream` and the `readline` module to read log files line-by-line. This asynchronous approach ensures the application can handle massive log files without consuming excessive RAM.
