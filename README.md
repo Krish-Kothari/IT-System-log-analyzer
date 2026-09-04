@@ -20,3 +20,5 @@ The application utilizes Node.js `fs.createReadStream` and the `readline` module
 
 ### 2. Regex Parsing Engine
 Raw text lines are passed through a parsing module that uses Regular Expressions (Regex) to extract structured metadata. Currently, the parser identifies error flags and extracts source IP addresses from unstructured text.
+### 3. Heuristic Threat Detection
+The analyzer module tracks suspicious behavior using JavaScript `Map` objects for efficient frequency counting. It flags potential Brute Force attacks if a single IP address exceeds the allowed threshold of failed login attempts.
