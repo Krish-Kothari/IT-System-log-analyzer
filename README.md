@@ -22,3 +22,8 @@ The application utilizes Node.js `fs.createReadStream` and the `readline` module
 Raw text lines are passed through a parsing module that uses Regular Expressions (Regex) to extract structured metadata. Currently, the parser identifies error flags and extracts source IP addresses from unstructured text.
 ### 3. Heuristic Threat Detection
 The analyzer module tracks suspicious behavior using JavaScript `Map` objects for efficient frequency counting. It flags potential Brute Force attacks if a single IP address exceeds the allowed threshold of failed login attempts.
+
+## Outputs and Reporting
+Upon completing the analysis, the application generates a structured JSON report asynchronously using `fs.promises`. 
+* **Output File:** `threat_report.json`
+* **Contents:** Timestamp of generation, total threats found, and a detailed array of flagged IP addresses with their attack attempt counts.
