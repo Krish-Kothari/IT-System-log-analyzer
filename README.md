@@ -10,7 +10,9 @@ A lightweight, interactive Node.js Command Line Interface (CLI) application desi
 2. Navigate to the project directory.
 
 ## Usage
-Run the main script to start the interactive prompt:
+A sample log file (`system.log`) is included in the repository for local testing.
+
+Run the application:
 ```bash
 node index.js
 ```markdown
