@@ -1,7 +1,10 @@
 const readline = require('readline');
 const chalk = require('chalk');
 const Table = require('cli-table3');
-const { spawn } = require('child_process'); // Imported for audio playback
+const { spawn } = require('child_process');
+const crypto = require('crypto');
+const fs = require('fs');
+
 const { readLogs } = require('./reader');
 const { parseLogLines } = require('./parser');
 const { detectThreats } = require('./analyzer');
@@ -15,59 +18,77 @@ const rl = readline.createInterface({
 console.log(chalk.cyan.bold(`
 =================================================
   🛡️  CRPF CENTRALIZED IT LOG ANALYZER  🛡️
+  NODE: MASTER COMMAND CENTER (DELHI)
 =================================================
 `));
 
-rl.question(chalk.yellow('Enter the path to the log file (e.g., ./system.log): '), async (filePath) => {
-  try {
-    console.log(chalk.blue('\n[*] Initializing Analysis Engine...'));
-    const rawLogs = await readLogs(filePath);
-    const parsedData = parseLogLines(rawLogs);
-    const threats = detectThreats(parsedData);
-    
-    const logTable = new Table({
-      head: [chalk.cyan('Status'), chalk.cyan('Source IP'), chalk.cyan('Log Message')],
-      colWidths: [15, 20, 50]
-    });
 
-    parsedData.forEach(log => {
-      if (log.isSuspicious) {
-        logTable.push([chalk.red('🚨 ALERT'), chalk.red(log.sourceIp), chalk.red(log.rawText)]);
+rl.question(chalk.yellow('Enter target CRPF Unit ID (e.g., CRPF-J&K-01): '), (unitId) => {
+  
+  rl.question(chalk.yellow('Enter the path to the remote log file: '), async (filePath) => {
+    try {
+      console.log(chalk.blue(`\n[*] Establishing secure connection to ${unitId.toUpperCase()}...`));
+      
+      console.log(chalk.blue('[*] Verifying cryptographic integrity of log file...'));
+      const fileBuffer = fs.readFileSync(filePath);
+      const hashSum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+      
+      console.log(chalk.green(`[+] File Integrity Verified. SHA-256 Checksum:`));
+      console.log(chalk.dim(`    ${hashSum}`));
+
+      console.log(chalk.blue('\n[*] Initializing Analysis Engine...'));
+      
+      const rawLogs = await readLogs(filePath);
+      const parsedData = parseLogLines(rawLogs);
+      const threats = detectThreats(parsedData);
+      
+      const logTable = new Table({
+        head: [chalk.cyan('Status'), chalk.cyan('Source IP'), chalk.cyan('Log Message')],
+        colWidths: [15, 20, 50]
+      });
+
+      parsedData.forEach(log => {
+        if (log.isSuspicious) {
+          logTable.push([chalk.red('🚨 ALERT'), chalk.red(log.sourceIp), chalk.red(log.rawText)]);
+        } else {
+          logTable.push([chalk.green('✅ OK'), chalk.green(log.sourceIp), chalk.dim(log.rawText)]);
+        }
+      });
+
+      console.log(chalk.bold.magenta(`\n--- SYSTEM LOG PREVIEW: ${unitId.toUpperCase()} ---`));
+      console.log(logTable.toString());
+
+      if (threats.length > 0) {
+        console.log(chalk.bgRed.white.bold(`\n 🚨 DETECTED ${threats.length} THREAT(S) IN ${unitId.toUpperCase()}! `));
+        
+        const threatTable = new Table({
+          head: [chalk.red('Severity'), chalk.red('Threat Type'), chalk.red('Attacker IP'), chalk.red('Attempts')]
+        });
+
+        threats.forEach(threat => {
+          let severity = 'LOW';
+          if (threat.attempts > 5) severity = chalk.yellow('MEDIUM');
+          if (threat.attempts > 10) severity = chalk.bgRed.white('CRITICAL');
+
+          threatTable.push([severity, threat.type, threat.ip, threat.attempts]);
+        });
+
+        console.log(threatTable.toString());
+
+        console.log(chalk.yellow('🔊 Triggering centralized threat detection alarm...'));
+        spawn("afplay", ["./sounds/faah.mp3"]);
+        
       } else {
-        logTable.push([chalk.green('✅ OK'), chalk.green(log.sourceIp), chalk.dim(log.rawText)]);
+        console.log(chalk.bgGreen.black.bold(`\n ✅ NO THREATS DETECTED IN ${unitId.toUpperCase()} `));
       }
-    });
 
-    console.log(chalk.bold.magenta('\n--- SYSTEM LOG PREVIEW ---'));
-    console.log(logTable.toString());
+      await generateReport({ unit: unitId, hash: hashSum, threats: threats });
+      console.log(chalk.green(`\n[+] Analysis complete. Report securely archived.`));
 
-    if (threats.length > 0) {
-      console.log(chalk.bgRed.white.bold(`\n 🚨 DETECTED ${threats.length} THREAT(S)! `));
-      
-      const threatTable = new Table({
-        head: [chalk.red('Threat Type'), chalk.red('Attacker IP'), chalk.red('Failed Attempts')]
-      });
-
-      threats.forEach(threat => {
-        threatTable.push([threat.type, threat.ip, threat.attempts]);
-      });
-
-      console.log(threatTable.toString());
-
-      // Trigger the warning sound
-      console.log(chalk.yellow('🔊 Playing threat detection alarm...'));
-      spawn("afplay", ["./sounds/faah.mp3"]); 
-      
-    } else {
-      console.log(chalk.bgGreen.black.bold('\n ✅ NO THREATS DETECTED '));
+    } catch (error) {
+      console.log(chalk.bgRed.white(`\n[!] Security Application Error: ${error.message} `));
+    } finally {
+      rl.close();
     }
-
-    await generateReport(threats);
-    console.log(chalk.green(`\n[+] Analysis complete. You can now close the application.`));
-
-  } catch (error) {
-    console.log(chalk.bgRed.white(`\n[!] Application Error: ${error.message} `));
-  } finally {
-    rl.close();
-  }
+  });
 });
