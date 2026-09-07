@@ -8,7 +8,7 @@ async function generateReport(threats) {
   };
 
   try {
-    await fs.writeFile('threat_report.json', JSON.stringify(report, null, 2));
+    await fs.appendFile('threat_report.json', `${JSON.stringify(report)}\n`);
     console.log(`[+] Report successfully saved to threat_report.json`);
   } catch (err) {
     console.error(`[!] Failed to write report:`, err);
