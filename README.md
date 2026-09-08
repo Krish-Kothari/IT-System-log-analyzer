@@ -9,6 +9,7 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 - Extracts IPv4 addresses from unstructured log messages.
 - Flags a potential brute-force attack when one IP produces more than three suspicious entries.
 - Displays detected threats in the terminal and saves a machine-readable report.
+- Generates a SHA-256 cryptographic hash of the log file and appends it to an immutable ledger, simulating blockchain integrity verification.
 
 ## Prerequisites
 
@@ -72,6 +73,8 @@ The application prints the number of detected threats and a table in the termina
 
 Each line is a separate report, and `generatedAt` is generated at runtime, so its value will differ on each execution. To process the history, read the file line by line and parse each non-empty line as JSON.
 
+Additionally, a cryptographic record is appended to blockchain_ledger.txt containing the timestamp, CRPF Unit ID, and the SHA-256 hash of the processed log file.
+
 ## Project Structure
 
 | File | Responsibility |
@@ -82,6 +85,7 @@ Each line is a separate report, and `generatedAt` is generated at runtime, so it
 | `analyzer.js` | Per-IP counting and threat classification |
 | `reporter.js` | JSON report generation |
 | `system.log` | Sample input log |
+| `blockchain_ledger.txt` | Immutable record of analyzed file hashes |
 
 ## Current Limitations
 
