@@ -19,4 +19,14 @@ async function generateReport(reportData) {
   }
 }
 
-module.exports = { generateReport };
+async function appendToLedger(crpfUnit, fileHash) {
+  const ledgerEntry = `${new Date().toISOString()} | UNIT: ${crpfUnit} | SHA-256: ${fileHash}\n`;
+  try {
+    await fs.writeFile('blockchain_ledger.txt', ledgerEntry, { flag: 'a' });
+    console.log(`[+] Hash securely committed to immutable ledger.`);
+  } catch (err) {
+    console.error(`[!] Failed to update ledger:`, err);
+  }
+}
+
+module.exports = { generateReport, appendToLedger };
