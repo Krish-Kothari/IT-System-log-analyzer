@@ -5,7 +5,7 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 ## Features
 
 - Reads log files line by line with a stream, avoiding the need to load the entire file into memory at once.
-- Detects suspicious entries containing `error` or `failed`, regardless of letter case.
+- Evaluates payloads against advanced cybersecurity threat signatures to dynamically classify attacks, including SQL Injection (SQLi), Cross-Site Scripting (XSS), and brute-force authentication failures.
 - Extracts IPv4 addresses from unstructured log messages.
 - Flags a potential brute-force attack when one IP produces more than three suspicious entries.
 - Displays detected threats in the terminal and saves a machine-readable report.
@@ -58,7 +58,7 @@ Lines without an IP address are still parsed, but they cannot be grouped into a 
 ## Detection Logic
 
 1. `reader.js` streams the input file and collects non-empty lines.
-2. `parser.js` marks lines containing `error` or `failed` and extracts the first IPv4 address.
+2. parser.js scans lines for generic error flags and specific regex signatures (SQLi, XSS), extracting the first IPv4 address.
 3. `analyzer.js` counts suspicious entries for each known IP using a JavaScript `Map`.
 4. An IP is reported as `Potential Brute Force` when its suspicious-entry count is greater than `3`.
 5. `reporter.js` appends the final report asynchronously with `fs.promises`.
