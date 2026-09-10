@@ -10,6 +10,7 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 - Flags a potential brute-force attack when one IP produces more than three suspicious entries.
 - Displays detected threats in the terminal and saves a machine-readable report.
 - Generates a SHA-256 cryptographic hash of the log file and appends it to an immutable ledger, simulating blockchain integrity verification.
+- Automatically compresses analyzed log files using Node.js native zlib streams (.gz) for secure, space-efficient forensic archiving.
 
 ## Prerequisites
 
@@ -62,6 +63,7 @@ Lines without an IP address are still parsed, but they cannot be grouped into a 
 3. `analyzer.js` counts suspicious entries for each known IP using a JavaScript `Map`.
 4. An IP is reported as `Potential Brute Force` when its suspicious-entry count is greater than `3`.
 5. `reporter.js` appends the final report asynchronously with `fs.promises`.
+6. archiver.js automatically compresses the raw log file into a .gz archive to save disk space while preserving forensic data.
 
 ## Output
 
@@ -86,6 +88,7 @@ Additionally, a cryptographic record is appended to blockchain_ledger.txt contai
 | `reporter.js` | JSON report generation |
 | `system.log` | Sample input log |
 | `blockchain_ledger.txt` | Immutable record of analyzed file hashes |
+| `archiver.js` | zlib-based log file compression |
 
 ## Current Limitations
 
