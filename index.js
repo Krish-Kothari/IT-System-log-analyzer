@@ -9,6 +9,7 @@ const { readLogs } = require('./reader');
 const { parseLogLines } = require('./parser');
 const { detectThreats } = require('./analyzer');
 const { generateReport } = require('./reporter');
+const { archiveLog } = require('./archiver');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -83,6 +84,7 @@ rl.question(chalk.yellow('Enter target CRPF Unit ID (e.g., CRPF-J&K-01): '), (un
       }
 
       await generateReport({ unit: unitId, hash: hashSum, threats: threats });
+      await archiveLog(filePath);
       console.log(chalk.green(`\n[+] Analysis complete. Report securely archived.`));
 
     } catch (error) {
