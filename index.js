@@ -63,7 +63,7 @@ rl.question(chalk.yellow('Enter target CRPF Unit ID (e.g., CRPF-J&K-01): '), (un
         console.log(chalk.bgRed.white.bold(`\n 🚨 DETECTED ${threats.length} THREAT(S) IN ${unitId.toUpperCase()}! `));
         
         const threatTable = new Table({
-          head: [chalk.red('Severity'), chalk.red('Threat Type'), chalk.red('Attacker IP'), chalk.red('Attempts')]
+          head: [chalk.red('Severity'), chalk.red('Threat Type'), chalk.red('Attacker IP'), chalk.red('Origin'), chalk.red('Attempts')]
         });
 
         threats.forEach(threat => {
@@ -71,7 +71,7 @@ rl.question(chalk.yellow('Enter target CRPF Unit ID (e.g., CRPF-J&K-01): '), (un
           if (threat.attempts > 5) severity = chalk.yellow('MEDIUM');
           if (threat.attempts > 10) severity = chalk.bgRed.white('CRITICAL');
 
-          threatTable.push([severity, threat.type, threat.ip, threat.attempts]);
+          threatTable.push([severity, threat.type, threat.ip, chalk.yellow(threat.origin), threat.attempts]);
         });
 
         console.log(threatTable.toString());
