@@ -10,6 +10,7 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 - Flags a potential brute-force attack when one IP produces more than three suspicious entries.
 - Displays detected threats in the terminal and saves a machine-readable report.
 - Generates a SHA-256 cryptographic hash of the log file and appends it to an immutable ledger, simulating blockchain integrity verification.
+- Provides basic network threat intelligence by categorizing source IP addresses as either Internal/Insider threats (e.g., 192.168.x.x, 10.x.x.x) or External/Foreign network threats.
 - Automatically compresses analyzed log files using Node.js native zlib streams (.gz) for secure, space-efficient forensic archiving.
 
 ## Prerequisites
@@ -70,7 +71,7 @@ Lines without an IP address are still parsed, but they cannot be grouped into a 
 The application prints the number of detected threats and a table in the terminal. It also appends one JSON object per run to `threat_report.json` using the JSON Lines format. Existing reports are preserved.
 
 ```jsonl
-{"generatedAt":"2026-09-07T12:00:00.000Z","totalThreats":1,"details":[{"ip":"192.168.1.50","attempts":4,"type":"Potential Brute Force"}]}
+{"generatedAt":"2026-09-07T12:00:00.000Z","crpfUnit":"CRPF-DELHI-01","totalThreats":1,"details":[{"ip":"192.168.1.50","origin":"Internal / Insider Threat","attempts":4,"type":"Potential Brute Force"}]}
 ```
 
 Each line is a separate report, and `generatedAt` is generated at runtime, so its value will differ on each execution. To process the history, read the file line by line and parse each non-empty line as JSON.
