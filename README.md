@@ -16,7 +16,7 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 ## Prerequisites
 
 - Node.js 14 or later.
-- No external npm packages are required.
+- External npm packages: `chalk@4` and `cli-table3`.
 
 ## Installation
 
@@ -26,20 +26,32 @@ A lightweight Node.js command-line application for analyzing IT system logs and 
 ```bash
 git clone <repository-url>
 cd IT-System-log-analyzer
+npm install chalk@4 cli-table3
 ```
 
 ## Usage
 
-The repository includes `system.log` for testing. Start the application with:
+The repository includes `system.log` for testing. You can run the application in two modes:
 
+**1. Interactive Mode (Manual Execution)**
+Run the application without arguments to launch the interactive terminal UI.
 ```bash
 node index.js
 ```
 
-When prompted, enter the path to a log file:
+When prompted, enter the target CRPF Unit ID and the log file path:
 
 ```text
-Enter the path to the log file (e.g., ./system.log): ./system.log
+Enter target CRPF Unit ID: CRPF-DELHI-01
+Enter the path to the log file: ./system.log
+```
+
+**2. Headless Automation Mode (Cronjob Ready)**
+
+For automated, scheduled execution (e.g., midnight cron jobs), pass the Unit ID and file path directly as command-line arguments to bypass the interactive prompts.
+
+```bash
+node index.js CRPF-DELHI-01 ./system.log
 ```
 
 The sample file contains four failed login entries from `192.168.1.50`, so it produces one potential brute-force threat. The report is written to `threat_report.json` in the project directory.
